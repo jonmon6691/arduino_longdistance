@@ -1,6 +1,14 @@
 # arduino_LongDistance
 An improvement to [arduino_RustysCalling]() that increases range, responsiveness, battery life, reduces complexity, and even folds your laundry!
 
+_Todo_
+* How long does the remote last on battery? Started test at 10:20pm 7/18, Stopped working at: __
+* Experiment with making the ringer louder
+* Design ringer control from the adafruit board
+* Integrate SFX board with adafruit board
+* Clean up phone wiring, can I get a new handset??
+* Add wiring for dial
+
 ## Remote
 This module is simply a button and a LoRa transmitter.
 
