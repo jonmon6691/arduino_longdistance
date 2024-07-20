@@ -2,10 +2,27 @@
 An improvement to [arduino_RustysCalling]() that increases range, responsiveness, battery life, reduces complexity, and even folds your laundry!
 
 _Todo_
-* How long does the remote last on battery? Started test at 10:20pm 7/18, Stopped working at: __
+* How long does the remote last on battery? (No power saving measures) Started test at 10:20pm 7/18, Dead before 10pm 7/20
+  * __Todo__: Try again with an implementation that sleeps the uC when idle.
+  * __TODO__: Unbrick the remote that is now stuck asleep :(
 * Experiment with making the ringer louder
+  * 2x A23 in parallel,(172mA) Not significantly louder, but less voltage drop during ringing (4v drop vs 2v drop) and will probably last a lot longer
+  * 12v wall wart, (210mA) not significantly louder, no voltage drop at all while ringing.
+  * 1x 9V, (160mA) not significantly quieter, but could in theory last a lot longer, like 20x
+  * 2x A23 in series (24v) doesn't work, but thankfully, doesn't break the ringer either
+  * 2x 9V in series (18.5v) doesn't work, but thankfully, doesn't break the ringer either
 * Design ringer control from the adafruit board
+  * Can the signal relay (EC2-5NU) be driven by the Feather?
+    * No. the 5NU has a min coil voltage of 3.6V
+    * EC2-3NU is available with coil voltage of 3V,  however it requires 51mA to drive it. The uC can only output 1mA worst case.
+    * A driver FET will be required.
+    * Or do I even need a relay? Maybe a 2N7000 will be good enough to drive the ringer module by itself
+    * __Todo__: Experiment with powering th eringer with a fet directly from an M0 output pin
 * Integrate SFX board with adafruit board
+  * Can be powered with as low as 3V.
+  * but feather power supply is only rated for 500mA, and the sound board could take up to a 1 amp peak for audio
+  * Could hook it directly to the BAT pin and get 3.7ish directly. And even use another FET to only power it when needed
+  * __TODO__: How much current does the sound board take while idle?
 * Clean up phone wiring, can I get a new handset??
 * Add wiring for dial
 
