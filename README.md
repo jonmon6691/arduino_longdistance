@@ -4,7 +4,7 @@ An improvement to [arduino_RustysCalling]() that increases range, responsiveness
 _Todo_
 * How long does the remote last on battery? (No power saving measures) Started test at 10:20pm 7/18, Dead before 10pm 7/20
   * __Todo__: Try again with an implementation that sleeps the uC when idle.
-  * __TODO__: Unbrick the remote that is now stuck asleep :(
+  * __Todo__: Unbrick the remote that is now stuck asleep :(
 * Experiment with making the ringer louder
   * 2x A23 in parallel,(172mA) Not significantly louder, but less voltage drop during ringing (4v drop vs 2v drop) and will probably last a lot longer
   * 12v wall wart, (210mA) not significantly louder, no voltage drop at all while ringing.
