@@ -3,7 +3,7 @@
 
 #include <SPI.h>
 #include <RH_RF95.h>
-#include <LowPower.h>
+#include <ArduinoLowPower.h>
 
 
 #if 1
@@ -21,8 +21,8 @@
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
 #define BUTTON 15 // Active low
-unsigned long t_last_pressed; // Holds the millis() timestamp of the last time the button was down
-#define SLEEP_TIME_MS 10000
+unsigned long t_sleep_stamp; // Holds the millis() timestamp after which the remote should sleep
+#define SLEEP_TIME_MS 1000 // Sleep after the last time the button was down
 
 void setup() 
 {
@@ -44,8 +44,8 @@ void setup()
   // The default transmitter power is 13dBm, using PA_BOOST.
   rf95.setTxPower(20, false);
 
-  t_last_pressed = millis();
-  attachInterrupt(digitalPinToInterrupt(BUTTON), nop_handler, LOW);
+  LowPower.attachInterruptWakeup(digitalPinToInterrupt(BUTTON), nop_handler, CHANGE);
+  t_sleep_stamp = millis() + SLEEP_TIME_MS;
   Serial.println("Setup finished.");
 }
  
@@ -57,18 +57,19 @@ void loop()
     rf95.send(data, 0);
     rf95.waitPacketSent();
     digitalWrite(LED_BUILTIN, HIGH);
-    t_last_pressed = millis();
+    t_sleep_stamp = millis() + SLEEP_TIME_MS;
   } else {
     digitalWrite(LED_BUILTIN, LOW);
   }
-  return;
-  if (millis() > t_last_pressed + SLEEP_TIME_MS) {
+  if (millis() > t_sleep_stamp) {
     rf95.setModeIdle();
-    LowPower.standby();
+    LowPower.sleep();
     // Waiting for interrupt
     rf95.setModeTx();
+    t_sleep_stamp = millis() + SLEEP_TIME_MS;
   }
 
 }
 
-void nop_handler(void) {}
+void nop_handler(void) {
+}
