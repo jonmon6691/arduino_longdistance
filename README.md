@@ -1,29 +1,15 @@
 # arduino_LongDistance
-An improvement to [arduino_RustysCalling]() that increases range, responsiveness, battery life, reduces complexity, and even folds your laundry!
+An improvement to [arduino_RustysCalling](https://github.com/jonmon6691/arduino_rustyscalling/) that increases range, responsiveness, battery life, reduces complexity, and even folds your laundry!
 
-_Todo_
-* How long does the remote last on battery?
-  * (No power saving measures) Started test at 10:20pm 7/18, Dead before 10pm 7/20
-  * (With sleep) Started test 8am 7/26, still going 2pm 2/27
-* Experiment with making the ringer louder
-  * 2x A23 in parallel,(172mA) Not significantly louder, but less voltage drop during ringing (4v drop vs 2v drop) and will probably last a lot longer
-  * 12v wall wart, (210mA) not significantly louder, no voltage drop at all while ringing.
-  * 1x 9V, (160mA) not significantly quieter, but could in theory last a lot longer, like 20x
-  * 2x A23 in series (24v) doesn't work, but thankfully, doesn't break the ringer either
-  * 2x 9V in series (18.5v) doesn't work, but thankfully, doesn't break the ringer either
-  * __Conclusion__: Using single 9V battery for now.
-* Design ringer control from the adafruit board
-  * Can the signal relay (EC2-5NU) be driven by the Feather?
-    * No. the 5NU has a min coil voltage of 3.6V. There is a 3V relay but it still requires 51mA to drive. Pins only good for 7mA max.
-    * __Conclusion__: Low-side driving ringer with a 2N2222 using a 1k base resistor. Pin current is about 2mA. Vce is about 300mV. Seems to work (albeit a little weakly) with the 9V battery. Could be a concern if the useable life of the 9V is cut short.
-    * __Todo__: Fix it, driver seems to die when on battery, not sure what's happening.
-* Integrate SFX board with adafruit board
-  * Can be powered with as low as 3V.
-  * but feather power supply is only rated for 500mA, and the sound board could take up to a 1 amp peak for audio
-  * Could hook it directly to the BAT pin and get 3.7ish directly. And even use another FET to only power it when needed
-  * __TODO__: How much current does the sound board take while idle?
+## Todo
+* Test low-side driver concept for Audio FX board
 * Clean up phone wiring, can I get a new handset??
 * Add wiring for dial
+* Power button
+  * Toggle button with LED
+  * LED can be powered directly with 3.3V output, brightness is good at 2k series R, current is only .5ma
+* Add Power button to PCB
+  * Will need 4ish wires added to the connector, JST input for the battery
 
 ## Remote
 This module is simply a button and a LoRa transmitter.
@@ -31,6 +17,12 @@ This module is simply a button and a LoRa transmitter.
 While the button is pressed, the remote transmitts packets as fast as it can. Otherwise it's idle, not sending anything.
 
 Note: To maximize the packet rate (and therefore increase the responsiveness), the modems use the `.setModemConfig(RH_RF95::Bw500Cr45Sf128)` setting to optimize speed at the cost of distance. In practice this results in a packet every 8ms. The range appears to be more than sufficient, even when the rx is closed inside the phone.
+
+Battery life for a SAMD Radiofruit with a 350mA little lipo pack is about 1 week. Would be nice if this was replaceable...
+<br />
+__Note:__ that's with 1mA while asleep (not using RFM sleep), 120mA while transmitting
+
+Investigating if these little button boards can work: https://github.com/EasySensors/ButtonSizeNode3
 
 ## Phone
 The LoRa receiver also orchestrates the phones other functions
@@ -41,6 +33,17 @@ Every time the phone receives a LoRa packet, it will run the ringer for the next
 To turn on the ringer, the microcontroller drives the base of a 2N2222 NPN transistor through a 1k resistor. That BJT provides a path to ground for a ringer module which converts the DC of a 9V battery into 70V 20Hz AC to power the ringer directly.
 
 Note: There is some experimentation to be done to increase the volume of the ringer. Perhaps another battery in parallel, or a different power source altogether.
+
+* Experiments on making the ringer louder
+  * 2x A23 in parallel,(172mA) Not significantly louder, but less voltage drop during ringing (4v drop vs 2v drop) and will probably last a lot longer
+  * 12v wall wart, (210mA) not significantly louder, no voltage drop at all while ringing.
+  * 1x 9V, (160mA) not significantly quieter, but could in theory last a lot longer, like 20x
+  * 2x A23 in series (24v) doesn't work, but thankfully, doesn't break the ringer either
+  * 2x 9V in series (18.5v) doesn't work, but thankfully, doesn't break the ringer either
+  * __Conclusion__: Using single 9V battery for convinience and longevity
+* Power consumption
+  * ESP + Lora listening = 81mA! 68mA of that is from the ESP by itself. Surely there's a way to lower this, maybe Wifi or BT is on??
+  * Audio FX board: 29mA idle
 
 ### Playing audio
 When the handset is lifted off the cradle, the phone will play a random audio file through the speaker.
