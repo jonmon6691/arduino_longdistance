@@ -4,17 +4,18 @@
 #include <SPI.h>
 #include <RH_RF95.h>
 
-#if 0
-// Feather M0 w/Radio
-#define RFM95_CS 8
-#define RFM95_INT 3
-#define RFM95_RST 4
-#else
+#define RINGER_PWR 26
+#define AFX_PWR 25
+#define AFX_ACT 13
+#define AFX_RST 12
+#define SW_OFF_HOOK 34
+#define SW_DIAL 39
+
 // ESP32 feather w/wing (Jon's dumb wiring)
 #define RFM95_CS 33   // "B"
 #define RFM95_INT 15  // "C"
 #define RFM95_RST 27  // "A"
-#endif
+
 
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
@@ -24,9 +25,13 @@ unsigned long t_activation_until;
 void setup() {
   t_activation_until = 0;
 
-  pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, LOW);
-
+  digitalWrite(RINGER_PWR, LOW); pinMode(RINGER_PWR, OUTPUT);
+  digitalWrite(AFX_PWR, LOW); pinMode(AFX_PWR, OUTPUT);
+  pinMode(AFX_ACT, INPUT_PULLUP);
+  pinMode(SW_OFF_HOOK, INPUT_PULLUP);
+  pinMode(SW_DIAL, INPUT_PULLUP);
+  
+  
   pinMode(RFM95_RST, OUTPUT);
   digitalWrite(RFM95_RST, HIGH);
 
@@ -55,8 +60,8 @@ void loop() {
   }
 
   if (millis() < t_activation_until) {
-    digitalWrite(LED_BUILTIN, HIGH);
+    digitalWrite(RINGER_PWR, HIGH);
   } else {
-    digitalWrite(LED_BUILTIN, LOW);
+    digitalWrite(RINGER_PWR, LOW);
   }
 }
