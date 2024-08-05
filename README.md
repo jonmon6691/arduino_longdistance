@@ -18,11 +18,17 @@ While the button is pressed, the remote transmitts packets as fast as it can. Ot
 
 Note: To maximize the packet rate (and therefore increase the responsiveness), the modems use the `.setModemConfig(RH_RF95::Bw500Cr45Sf128)` setting to optimize speed at the cost of distance. In practice this results in a packet every 8ms. The range appears to be more than sufficient, even when the rx is closed inside the phone.
 
+### Feather Option
+https://www.adafruit.com/product/3178
+
 Battery life for a SAMD Radiofruit with a 350mA little lipo pack is about 1 week. Would be nice if this was replaceable...
 <br />
 __Note:__ that's with 1mA while asleep (not using RFM sleep), 120mA while transmitting
 
-Investigating if these little button boards can work: https://github.com/EasySensors/ButtonSizeNode3
+### BSN3 Option
+https://github.com/EasySensors/ButtonSizeNode3
+
+Programs just like an Arduino Pro Mini, directly with an FTDI cable. Using sleep state for the Mega and for radio its down to 4 microamps. The two CR2032's (255mAh @ 6.5V) should last 7 years!!! I need to double check my ammeter tbh
 
 ## Phone
 The LoRa receiver also orchestrates the phones other functions
